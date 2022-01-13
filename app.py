@@ -1,14 +1,30 @@
-from flask import Flask, send_from_directory
-from flask_restful import Api, Resource, reqparse
-from flask_cors import CORS #comment this on deployment
-from api.HelloApiHandler import HelloApiHandler
+# Import the required libraries
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 
-app = Flask(__name__, static_url_path='', static_folder='frontend/build')
-CORS(app) #comment this on deployment
-api = Api(app)
 
-@app.route("/", defaults={'path':''})
-def serve(path):
-    return send_from_directory(app.static_folder,'index.html')
+# Create various application instances
+# Order matters: Initialize SQLAlchemy before Marshmallow
+db = SQLAlchemy()
+migrate = Migrate()
+ma = Marshmallow()
+cors = CORS()
 
-api.add_resource(HelloApiHandler, '/flask/hello')
+
+def create_app():
+    """Application-factory pattern"""
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqldb://root:password@localhost:3306/education-today-miimran2"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Initialize extensions
+    # To use the application instances above, instantiate with an application:
+    db.init_app(app)
+    migrate.init_app(app, db)
+    ma.init_app(app)
+    cors.init_app(app)
+
+    return app
