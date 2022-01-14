@@ -1,5 +1,9 @@
-.main-page-info {
+.main-page {
   width: 60%;
   margin-left: auto;
   margin-right: auto;
+}
+
+.main-page-info {
+  margin-bottom: 20px;
 }

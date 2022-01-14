@@ -1,45 +1,81 @@
 import {useState, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
 import './MainPage.css';
 
 export default function MainPage() {
   const [author, setAuthor] = useState('');
-  const [authorList, setAuthorList] = useState({
-    isLoading: true,
-    isErrored: false,
-    data: [],
-  });
   const [mostReferenced, setMostReferenced] = useState({
+    init: true,
     isLoading: false,
-    isErrored: false,
-    data: []
+    data: [],
+    error: '',
   });
 
-  useEffect(() => {
-    async function fetchAuthorList() {
-      fetch('http://localhost:5000/author').then((res) => res.json())
-      .then(res => {
-        console.log(res);
-      })
-    }
-    fetchAuthorList();
-  }, [])
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(author);
+    setMostReferenced({
+      init: false,
+      isLoading: true,
+      data: [],
+      error: '',
+    });
+
+    fetch(`http://localhost:5000/author/${author}/citations`).then(res => res.json())
+    .then((res) => {
+      setMostReferenced({
+        isLoading: false,
+        ...res,
+      })
+    })
+    .catch(err => {
+      setMostReferenced({
+        isLoading: false,
+        data: [],
+        error: err.message,
+      })
+    });
+
   }
 
   function handleChange(e) {
     setAuthor(e.target.value);
+  }
+  
+  let results = null;
+  if (mostReferenced.init) {
+    results = null;
+  }
+  else if (mostReferenced.isLoading) {
+    results = <CircularProgress/>;
+  }
+  else if (mostReferenced.error && mostReferenced.error.length > 0) {
+    results = <Paper>{mostReferenced.error}</Paper>;
+  }
+  else {
+    const {name, mostReferenced: referencedPapers} = mostReferenced.data;
+    console.log(referencedPapers);
+    results = (
+      <Paper>
+        <h2>{name}</h2>
+        {
+          referencedPapers.map(({count, paperId}) => (
+            <p key={paperId}>{paperId} used {count} time{count !== 1 && 's'}</p>
+          ))
+        }
+      </Paper>
+    )
   }
   return (
     <div className="main-page">
       <h1>Most Commonly Referenced Papers</h1>
       
       <form className="main-page-info" onSubmit={handleSubmit}>
-        <TextField id="standard-basic" label="Author's Name" variant="standard" fullWidth value={author} onChange={handleChange}/>
+        <TextField id="standard-basic" label="Author's Name or AuthorId" variant="standard" fullWidth value={author} onChange={handleChange}/>
       </form>
+
+      {results}
     </div>
   )
 }
