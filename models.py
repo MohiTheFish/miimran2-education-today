@@ -1,22 +1,55 @@
 from app import db,ma
 
-class City(db.Model):
+# Models
+class Authors(db.Model):
+    authorId = db.Column(db.Integer, primary_key=True)
+    authorRank = db.Column(db.Integer)
+    normalizedName = db.Column(db.String(256))
+    displayName = db.Column(db.String(256))
+    lastKnownAffiliationId = db.Column(db.Integer)
+    createdDate = db.Column(db.DateTime)
+
+class Papers(db.Model):
+    paperId = db.Column(db.Integer, primary_key=True)
+    docType = db.Column(db.String)
+    originalTitle = db.Column(db.String(1024))
+    paperYear = db.Column(db.Integer)
+    paperDate = db.Column(db.DateTime)
+    publisher = db.Column(db.String(1024))
+    originalVenue = db.Column(db.String(1024))
+
+class PaperAuthorAffiliations(db.Model):
+    paperId = db.Column(db.Integer)
+    authorId = db.Column(db.Integer)
+    affiliationId = db.Column(db.Integer)
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(35),nullable=False)
-    countryCode = db.Column(db.String(3), nullable=False)
-    district = db.Column(db.String(3), nullable=False)
-    population = db.Column(db.Integer, nullable=False)
+    # __tablename__ = 'paperauthoraffiliations'
+
+class PaperReferences(db.Model):
+    paperId = db.Column(db.Integer, primary_key=True)
+    paperReferenceId = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'paperreferences'
 
 
-    def __repr__(self):
-        return "<City %r>" % self.title
+# Serialization Schemas
 
-# Generate marshmallow Schemas from your models
-class CitySchema(ma.Schema):
+class AuthorsSchema(ma.Schema):
     class Meta:
-        # Fields to expose
-        fields = ("id","name", "countryCode", "district", "population")
+        fields = ("authorId", "authorRank", "normalizedName", "displayName", "lastKnownAffiliationId", "createdDate")
+authors_schema = AuthorsSchema(many=True)
 
+class PapersSchema(ma.Schema):
+    class Meta:
+        fields = ("paperId", "docType", "originalTitle", "paperYear", "paperDate", "publisher", "originalVenue")
+papers_schema = PapersSchema(many=True)
 
-city_schema = CitySchema()
-cities_schema = CitySchema(many=True)
+class PaperAuthorAffiliationsSchema(ma.Schema):
+    class Meta:
+        fields = ("paperId", "authorId", "affiliationId")
+paperAuthorAffiliations_schema = PaperAuthorAffiliationsSchema(many=True)
+
+class PaperReferencesSchema(ma.Schema):
+    class Meta:
+        fields = ("paperId", "paperReferenceId")
+paperReferences_schema = PaperReferencesSchema(many=True)
