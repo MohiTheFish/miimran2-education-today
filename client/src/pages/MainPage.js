@@ -1,8 +1,13 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import './MainPage.css';
+
+function ReferencedPaper({count, paperId}) {
+  return <p key={paperId}>{paperId} used {count} time{count !== 1 && 's'}</p>;
+}
 
 export default function MainPage() {
   const [author, setAuthor] = useState('');
@@ -15,6 +20,15 @@ export default function MainPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (author.length === 0) {
+      setMostReferenced({
+        init: false,
+        isLoading: false,
+        data: [],
+        error: 'Search field is empty',
+      })
+      return;
+    }
     setMostReferenced({
       init: false,
       isLoading: true,
@@ -55,14 +69,11 @@ export default function MainPage() {
   }
   else {
     const {name, mostReferenced: referencedPapers} = mostReferenced.data;
-    console.log(referencedPapers);
     results = (
       <Paper>
         <h2>{name}</h2>
         {
-          referencedPapers.map(({count, paperId}) => (
-            <p key={paperId}>{paperId} used {count} time{count !== 1 && 's'}</p>
-          ))
+          referencedPapers.map(({count, paperId}) => <ReferencedPaper key={paperId} count={count}paperId={paperId} />)
         }
       </Paper>
     )
@@ -73,6 +84,7 @@ export default function MainPage() {
       
       <form className="main-page-info" onSubmit={handleSubmit}>
         <TextField id="standard-basic" label="Author's Name or AuthorId" variant="standard" fullWidth value={author} onChange={handleChange}/>
+        <Button sx={{marginLeft: '20px'}} onClick={handleSubmit} variant="contained">Search</Button>
       </form>
 
       {results}

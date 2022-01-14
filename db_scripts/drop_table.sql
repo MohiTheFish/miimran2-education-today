@@ -1,5 +1,5 @@
--- DROP TABLE PaperReferences;
--- DROP TABLE PaperAuthorAffiliations;
+DROP TABLE PaperReferences;
+DROP TABLE PaperAuthorAffiliations;
 DROP TABLE Papers;
--- DROP TABLE Authors;
--- Drop Table Affiliations;
+DROP TABLE Authors;
+Drop Table Affiliations;
