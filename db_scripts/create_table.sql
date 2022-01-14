@@ -3,15 +3,7 @@ CREATE TABLE Affiliations (
     AffiliationRank int,
     NormalizedName varchar(256),
     DisplayName varchar(256),
-    GridId varchar(256),
-    OfficialPage varchar(256),
     WikiPage varchar(256),
-    PaperCount bigint,
-    PaperFamilyCount bigint,
-    CitationCount bigint,
-    Iso3166Code varchar(2),
-    Latitude float,
-    Longitude float,
     CreatedDate datetime
 );
 
@@ -20,58 +12,30 @@ CREATE TABLE Authors (
     AuthorRank int,
     NormalizedName varchar(256),
     DisplayName varchar(256),
-    LastKnownAffiliationId bigint,
-    PaperCount bigint, 
-    PaperFamilyCount bigint,
-    CitationCount bigint,
-    CreatedDate datetime
+    LastKnownAffiliationId bigint DEFAULT NULL
 );
 
 CREATE TABLE Papers (
     PaperId bigint PRIMARY KEY,
-    PaperRank int,
-    Doi varchar(256),
     DocType varchar(32),
-    PaperTitle varchar(256),
-    OriginalTitle varchar(256),
-    BookTitle varchar(256),
-    PaperYear int,
-    PaperDate datetime,
-    OnlineDate datetime,
-    Publisher varchar(256),
-    Volume varchar(256),
-    Issue varchar(256),
-    FirstPage text,
-    LastPage text,
-    ReferenceCount bigint,
-    CitationCount bigint,
-    EstimatedCitation bigint,
-    OriginalVenue varchar(256),
-    FamilyId bigint,
-    FamilyRank int,
-    DocSubTypes varchar(32),
-    CreatedDate datetime
+    OriginalTitle varchar(1024),
+    PaperYear int DEFAULT NULL,
+    PaperDate datetime DEFAULT NULL,
+    Publisher varchar(1024),
+    OriginalVenue varchar(1024)
 );
 
 CREATE TABLE PaperAuthorAffiliations (
     PaperId bigint,
     AuthorId bigint,
-    AffiliationId bigint,
-    AuthorSequenceNumber int,
-    OriginalAuthor varchar(256),
-    OriginalAffiliation varchar(256),
+    AffiliationId bigint DEFAULT NULL,
 
-    id bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    FOREIGN KEY (PaperId) REFERENCES Papers(PaperId),
-    FOREIGN KEY (AuthorId) REFERENCES Authors(AuthorId),
-    FOREIGN KEY (AffiliationId) REFERENCES Affiliations(AffiliationId)
+    id bigint PRIMARY KEY NOT NULL AUTO_INCREMENT
 );
 
 CREATE TABLE PaperReferences (
     PaperId bigint,
     PaperReferenceId bigint,
 
-    PRIMARY KEY (PaperId, PaperReferenceId),
-    FOREIGN KEY (PaperId) REFERENCES Papers(PaperId),
-    FOREIGN KEY (PaperReferenceId) REFERENCES Papers(PaperId) 
+    PRIMARY KEY (PaperId, PaperReferenceId)
 );
