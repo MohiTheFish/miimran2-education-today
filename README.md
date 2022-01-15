@@ -1,6 +1,25 @@
 # Education Today Citations
 As part of the application for the 25% RA position, I completed the first task, to find the most cited papers by a given author.
 
+## Setup
+### SQL database setup
+Update the db_scripts/read_data.sql to point to the location of the data folder. Then run `source db_scripts/create_table.sql` and `source db_scripts/read_data.sql` to insert the data from the .txt files into the database.
+
+### Flask setup
+I am using python 3.9.7, but this should be backwards compatible with most python3 versions. First create a venv to make sure you are not creating any collisions with other python packages. This is done with `python -m venv venv`. On Windows, you can then activate the venv with `.\venv\Scripts\activate`. This run `pip install -r requirements.txt`. The server can then be started by running the following:
+```bash
+python routes.py
+```
+
+### React app (frontend)
+Make sure you have `npm` installed. Once that is installed, from the root of the repo, run the following
+```bash
+cd client
+npm install
+npm run start
+```
+You can then view the app in  any browser at `http://localhost:3000/`.
+
 ## SQL Database
 I first began by taking a look at the schema on the Microsoft documentation, and picked out the relevant fields, as well as additional fields that I was personally interested in. I was planning to keep these fields around for ability to render additional information.
 
